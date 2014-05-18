@@ -39,11 +39,11 @@
             android:scaleType="center" />
     </LinearLayout>
     
-    <com.hawkbrowser.chromelib.WebView android:id="@+id/web_view"
+    <com.hawkbrowser.webkit.WebView android:id="@+id/web_view"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.hawkbrowser.chromelib.WebView>
+    </com.hawkbrowser.webkit.WebView>
 
 </LinearLayout>
 

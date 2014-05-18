@@ -19,7 +19,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.hawkbrowser.chromelib.WebView;
+import com.hawkbrowser.webkit.WebView;
 
 public class MainActivity extends Activity {
 

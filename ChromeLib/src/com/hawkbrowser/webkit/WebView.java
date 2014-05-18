@@ -1,4 +1,4 @@
-package com.hawkbrowser.chromelib;
+package com.hawkbrowser.webkit;
 
 import org.chromium.chrome.hawkbrowser.HawkBrowserTab;
 import org.chromium.content.browser.ActivityContentVideoViewClient;
@@ -6,6 +6,9 @@ import org.chromium.content.browser.ContentVideoViewClient;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.ContentViewClient;
 import org.chromium.content.common.ProcessInitException;
+
+import com.hawkbrowser.chromelib.ChromeInitializer;
+import com.hawkbrowser.chromelib.TabManager;
 
 import android.app.Activity;
 import android.content.Context;
