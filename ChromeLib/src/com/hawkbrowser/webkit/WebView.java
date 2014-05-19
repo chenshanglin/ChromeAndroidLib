@@ -19,6 +19,8 @@ public class WebView extends FrameLayout
 	private TabManager mTabManager;
 	private HawkBrowserTab mTab;
     private String mPendingLoadUrl;
+    private WebViewClient mWebViewClient;
+    private WebChromeClient mWebChromeClient;
     private ContentClientAdapter mContentClientAdapter;
     private DownloadListener mDownloadListener;
     
@@ -91,6 +93,10 @@ public class WebView extends FrameLayout
 			assert mTab != null;
 			
 			mContentClientAdapter = new ContentClientAdapter(this);
+			if(null != mWebViewClient)
+				mContentClientAdapter.setWebViewClient(mWebViewClient);
+			if(null != mWebChromeClient)
+				mContentClientAdapter.SetChromeClient(mWebChromeClient);
 			
 			mTab.getContentView().setDownloadDelegate(this);
 			
@@ -167,6 +173,9 @@ public class WebView extends FrameLayout
 			
 			TabManager.get(getContext()).destroyTab(mTab);
 			mTab = null;
+			
+			mWebViewClient = null;
+			mWebChromeClient = null;
 		}
 	}
 	
@@ -210,10 +219,10 @@ public class WebView extends FrameLayout
 	}
 	
 	public void setWebViewClient(WebViewClient client) {
-		mContentClientAdapter.setWebViewClient(client);
+		mWebViewClient = client;
 	}
 	
 	public void setWebChromeClient(WebChromeClient client) {
-		mContentClientAdapter.SetChromeClient(client);
+		mWebChromeClient = client;
 	}
 }
