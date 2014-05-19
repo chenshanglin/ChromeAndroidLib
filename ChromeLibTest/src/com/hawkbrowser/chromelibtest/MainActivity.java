@@ -48,15 +48,7 @@ public class MainActivity extends Activity {
         }
                                            
     	mWebView = (WebView) findViewById(R.id.web_view);     
-    	
-    	try {
-    		mWebView.loadUrl(mStartupUrl);
-    	} catch (ProcessInitException e) {
-            Log.e(TAG, "Failed to load native library.", e);
-            System.exit(-1);
-        }
-    	   	
-//    	mAwTestContainerView.loadUrl(mStartupUrl);
+    	mWebView.loadUrl(mStartupUrl);
     }
     
     private static String getUrlFromIntent(Intent intent) {
@@ -85,17 +77,11 @@ public class MainActivity extends Activity {
                 }
 
                 String url = mUrlTextView.getText().toString();
-                if(!url.startsWith("http")) {
+                if(!url.startsWith("http://") && !url.startsWith("chrome://")) {
                 	url = "http://" + url;
                 }
                 
-            	try {
-            		mWebView.loadUrl(url);
-            	} catch (ProcessInitException e) {
-                    Log.e(TAG, "Failed to load native library.", e);
-                    System.exit(-1);
-                }
-            	
+                mWebView.loadUrl(url);
                 mUrlTextView.clearFocus();
                 setKeyboardVisibilityForUrl(false);
                 mWebView.requestFocus();

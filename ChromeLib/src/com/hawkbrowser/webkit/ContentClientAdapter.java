@@ -43,10 +43,10 @@ public class ContentClientAdapter
 	}
 	
 	public ContentClientAdapter(WebView webView) {
-        super(webView.getContentView().getContentViewCore());
+        super(webView.getTab().getContentViewCore());
         mWebView = webView;
         
-        webView.getContentView().setContentViewClient(
+        webView.getTab().getContentView().setContentViewClient(
         	new HawkBrowserContentViewClient());
         
         webView.getTab().addObserver(this);
@@ -54,7 +54,7 @@ public class ContentClientAdapter
 	
 	public void destroy() {
 		mWebView.getTab().removeObserver(this);
-		mWebView.getContentView().getContentViewCore().setContentViewClient(null);
+		mWebView.getTab().getContentView().setContentViewClient(null);
 		mWebView = null;
 		mWebViewClient = null;
 		mWebChromeClient = null;

@@ -1,15 +1,9 @@
 package com.hawkbrowser.webkit;
 
 import org.chromium.chrome.hawkbrowser.HawkBrowserTab;
-import org.chromium.content.browser.ActivityContentVideoViewClient;
-import org.chromium.content.browser.ContentVideoViewClient;
-import org.chromium.content.browser.ContentView;
-import org.chromium.content.browser.ContentViewClient;
 import org.chromium.content.browser.ContentViewDownloadDelegate;
 import org.chromium.content.browser.DownloadInfo;
-import org.chromium.content.common.ProcessInitException;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -28,9 +22,18 @@ public class WebView extends FrameLayout
     private ContentClientAdapter mContentClientAdapter;
     private DownloadListener mDownloadListener;
     
+    
+	public WebView(Context context) {
+		super(context);
+	}
+	
     public WebView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
+	}
+    
+	public WebView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
 	}
     
     // package visible only
@@ -38,7 +41,7 @@ public class WebView extends FrameLayout
     	return mTab;
     }
         
-    public void loadUrl(String url) throws ProcessInitException {
+    public void loadUrl(String url) {
     	
     	final ChromeInitializer chromeInitializer = ChromeInitializer.get();
     	
@@ -89,7 +92,7 @@ public class WebView extends FrameLayout
 			
 			mContentClientAdapter = new ContentClientAdapter(this);
 			
-			getContentView().setDownloadDelegate(this);
+			mTab.getContentView().setDownloadDelegate(this);
 			
 //			final Activity hostActivity = getContext() instanceof Activity ? 
 //					(Activity) getContext() : null;
@@ -109,38 +112,50 @@ public class WebView extends FrameLayout
 		if(null == mTab)
 			return "";
 		else
-			return mTab.getContentView().getUrl();
+			return mTab.getUrl();
+	}
+	
+	public String getTitle() {
+		if(null == mTab)
+			return "";
+		else
+			return mTab.getTitle();
+	}
+	
+	public int getProgress() {
+		if(null == mTab)
+			return 0;
+		else
+			return mTab.getChromeWebContentsDelegateAndroid().getMostRecentProgress();
+	}
+	
+	public void reload() {
+		if(null != mTab)
+			mTab.reload();
 	}
 	
 	public boolean canGoBack() {
 		if(null == mTab)
 			return false;
 		else
-			return mTab.getContentView().canGoBack();
+			return mTab.canGoBack();
 	}
 	
 	public boolean canGoForward() {
 		if(null == mTab)
 			return false;
 		else
-			return mTab.getContentView().canGoForward();
+			return mTab.canGoForward();
 	}
 	
 	public void goBack() {
 		if(null != mTab)
-			mTab.getContentView().goBack();
+			mTab.goBack();
 	}
 
 	public void goForward() {
 		if(null != mTab)
-			mTab.getContentView().goForward();
-	}
-
-	public ContentView getContentView() {
-		if(null != mTab)
-			return mTab.getContentView();
-		else
-			return null;
+			mTab.goForward();
 	}
 	
 	public void destroy() {

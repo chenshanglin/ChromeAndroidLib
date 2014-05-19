@@ -58,7 +58,7 @@ public class ChromeInitializer {
 		return mIsInitialized;
 	}
 	
-	public void initialize() throws ProcessInitException {
+	public void initialize() {
 		
 		if(mIsInitialized)
 			return;
@@ -75,7 +75,7 @@ public class ChromeInitializer {
 	}
 	
 	// package internal only
-	public void	ensureLibraryLoaded() throws ProcessInitException {
+	public void	ensureLibraryLoaded() {
 		
 		if(mIsLibraryLoaded)
 			return;
@@ -85,8 +85,7 @@ public class ChromeInitializer {
         try {
             LibraryLoader.ensureInitialized();
         } catch (ProcessInitException e) {
-            Log.e(TAG, "ContentView initialization failed.", e);
-            throw e;
+            throw new RuntimeException("Error initializing WebView library.", e);
         }
 		
 	}
@@ -99,7 +98,7 @@ public class ChromeInitializer {
 		return mIsStartFinished;
 	}
 	
-	public void startChrome(Context context) throws ProcessInitException {
+	public void startChrome(Context context) {
 				
 		if(mIsStart)
 			return;
@@ -132,8 +131,7 @@ public class ChromeInitializer {
                     }
                 });
         } catch (ProcessInitException e) {
-            Log.e(TAG, "Unable to load native library.", e);
-            throw e;
+            throw new RuntimeException("Error startup WebView library.", e);
         }
 	}
 	// 
