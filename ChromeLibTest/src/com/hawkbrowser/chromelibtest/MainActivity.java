@@ -76,11 +76,7 @@ public class MainActivity extends Activity {
                     return false;
                 }
 
-                String url = mUrlTextView.getText().toString();
-                if(!url.startsWith("http://") && !url.startsWith("chrome://")) {
-                	url = "http://" + url;
-                }
-                
+                String url = mUrlTextView.getText().toString();                
                 mWebView.loadUrl(url);
                 mUrlTextView.clearFocus();
                 setKeyboardVisibilityForUrl(false);

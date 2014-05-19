@@ -9,6 +9,7 @@ import org.chromium.ui.base.WindowAndroid;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -89,6 +90,11 @@ public class WebView extends FrameLayout
 		}
 		
 		assert mTab != null;
+		
+		if(!url.startsWith("http://") && !url.startsWith("chrome://")
+			&& !url.startsWith("about:")) {
+			url = "http://" + url;
+		}
 		
 		mTab.loadUrlWithSanitization(url);
 		
@@ -250,5 +256,11 @@ public class WebView extends FrameLayout
 	
 	public void setWebChromeClient(WebChromeClient client) {
 		mWebChromeClient = client;
+	}
+	
+	public void drawToBitmap(Bitmap bitmap) {
+		if(null != mContentViewRenderView) {
+			mContentViewRenderView.compositeToBitmap(bitmap);
+		}
 	}
 }
