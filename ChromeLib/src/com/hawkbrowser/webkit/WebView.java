@@ -5,29 +5,39 @@ import org.chromium.content.browser.ActivityContentVideoViewClient;
 import org.chromium.content.browser.ContentVideoViewClient;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.ContentViewClient;
+import org.chromium.content.browser.ContentViewDownloadDelegate;
+import org.chromium.content.browser.DownloadInfo;
 import org.chromium.content.common.ProcessInitException;
-
-import com.hawkbrowser.chromelib.ChromeInitializer;
-import com.hawkbrowser.chromelib.TabManager;
 
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-public class WebView extends FrameLayout {
+import com.hawkbrowser.chromelib.ChromeInitializer;
+import com.hawkbrowser.chromelib.TabManager;
+
+public class WebView extends FrameLayout 
+					 implements ContentViewDownloadDelegate {
 	
 	private static final String TAG = "ChromeLib";
 	
 	private TabManager mTabManager;
 	private HawkBrowserTab mTab;
     private String mPendingLoadUrl;
+    private ContentClientAdapter mContentClientAdapter;
+    private DownloadListener mDownloadListener;
     
     public WebView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
 	}
-
+    
+    // package visible only
+    HawkBrowserTab getTab() {
+    	return mTab;
+    }
+        
     public void loadUrl(String url) throws ProcessInitException {
     	
     	final ChromeInitializer chromeInitializer = ChromeInitializer.get();
@@ -77,17 +87,21 @@ public class WebView extends FrameLayout {
 			
 			assert mTab != null;
 			
-			final Activity hostActivity = getContext() instanceof Activity ? 
-					(Activity) getContext() : null;
+			mContentClientAdapter = new ContentClientAdapter(this);
 			
-			if(null != hostActivity) {
-				getContentView().setContentViewClient(new ContentViewClient() {
-		            @Override
-		            public ContentVideoViewClient getContentVideoViewClient() {
-		                return new ActivityContentVideoViewClient(hostActivity);
-		            }
-		        });	
-			}
+			getContentView().setDownloadDelegate(this);
+			
+//			final Activity hostActivity = getContext() instanceof Activity ? 
+//					(Activity) getContext() : null;
+//			
+//			if(null != hostActivity) {
+//				getContentView().setContentViewClient(new ContentViewClient() {
+//		            @Override
+//		            public ContentVideoViewClient getContentVideoViewClient() {
+//		                return new ActivityContentVideoViewClient(hostActivity);
+//		            }
+//		        });	
+//			}
 		}
 	}
 		
@@ -132,8 +146,59 @@ public class WebView extends FrameLayout {
 	public void destroy() {
 		
 		if(null != mTab) {
+		
+			mTab.getContentView().setDownloadDelegate(null);
+			// mContentClientAdapter.destroy();
+			
 			TabManager.get(getContext()).destroyTab(mTab);
 			mTab = null;
 		}
+	}
+	
+	public void setDownloadListener(DownloadListener listener) {
+		mDownloadListener = listener;
+	}
+	
+    /**
+    * Notify the host application that a file should be downloaded. Replaces
+    * onDownloadStart from DownloadListener.
+    * @param downloadInfo Information about the requested download.
+    */
+	@Override
+    public void requestHttpGetDownload(DownloadInfo downloadInfo) {
+		if(null != mDownloadListener)
+			mDownloadListener.onDownloadStart(
+				downloadInfo.getUrl(), downloadInfo.getUserAgent(), 
+				downloadInfo.getContentDisposition(),
+				downloadInfo.getMimeType(), downloadInfo.getContentLength());
+	}
+
+    /**
+     * Notify the host application that a download is started.
+     * @param filename File name of the downloaded file.
+     * @param mimeType Mime of the downloaded item.
+     */
+	@Override
+    public void onDownloadStarted(String filename, String mimeType) {
+		assert false;
+	}
+
+    /**
+     * Notify the host application that a download has an extension indicating
+     * a dangerous file type.
+     * @param filename File name of the downloaded file.
+     * @param downloadId The download id.
+     */
+	@Override
+    public void onDangerousDownload(String filename, int downloadId) {
+		assert false;
+	}
+	
+	public void setWebViewClient(WebViewClient client) {
+		mContentClientAdapter.setWebViewClient(client);
+	}
+	
+	public void setWebChromeClient(WebChromeClient client) {
+		mContentClientAdapter.SetChromeClient(client);
 	}
 }

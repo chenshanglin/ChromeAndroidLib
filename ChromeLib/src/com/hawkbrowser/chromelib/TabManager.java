@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import org.chromium.chrome.hawkbrowser.HawkBrowserTab;
 import org.chromium.content.browser.ContentViewRenderView;
+import org.chromium.content.browser.DownloadController;
+import org.chromium.content.browser.DownloadInfo;
 import org.chromium.ui.base.ActivityWindowAndroid;
 import org.chromium.ui.base.WindowAndroid;
 
@@ -60,6 +62,32 @@ public class TabManager extends FrameLayout {
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT));
+        
+        
+        setDownloadNotificationService();
+    }
+    
+    private void setDownloadNotificationService() {
+		DownloadController.setDownloadNotificationService(
+				new DownloadController.DownloadNotificationService() {
+			        /**
+			         * Notify the host application that a download is finished.
+			         * @param downloadInfo Information about the completed download.
+			         */
+					@Override
+			        public void onDownloadCompleted(final DownloadInfo downloadInfo) {
+			        	assert false;
+			        }
+
+			        /**
+			         * Notify the host application that a download is in progress.
+			         * @param downloadInfo Information about the in-progress download.
+			         */
+					@Override
+			        public void onDownloadUpdated(final DownloadInfo downloadInfo) {
+						assert false;
+			        }
+			    });
     }
 
     @Override

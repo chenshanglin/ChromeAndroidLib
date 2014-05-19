@@ -4,7 +4,7 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="libs/base_java.jar"/>
-	<classpathentry kind="lib" path="libs/content_java.jar"/>
+	<classpathentry kind="lib" path="libs/content_java.jar" sourcepath="E:/code/chrome_android/chromium/src"/>
 	<classpathentry kind="lib" path="libs/media_java.jar"/>
 	<classpathentry kind="lib" path="libs/navigation_interception_java.jar"/>
 	<classpathentry kind="lib" path="libs/net_java.jar"/>
