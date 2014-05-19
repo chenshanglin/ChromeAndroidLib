@@ -64,7 +64,7 @@ public class TabManager extends FrameLayout {
                         FrameLayout.LayoutParams.MATCH_PARENT));
         
         
-        setDownloadNotificationService();
+//        setDownloadNotificationService();
     }
     
     private void setDownloadNotificationService() {
@@ -110,9 +110,10 @@ public class TabManager extends FrameLayout {
         if (!isContentViewRenderViewInitialized()) 
         	return null;
 
-        HawkBrowserTab tab = new HawkBrowserTab(getContext(), url, mWindow);
+        HawkBrowserTab tab = new HawkBrowserTab(getContext(), mWindow);
         mTabs.add(tab);
         setCurrentTab(tab);
+        tab.loadUrlWithSanitization(url);
         
         return tab;
     }

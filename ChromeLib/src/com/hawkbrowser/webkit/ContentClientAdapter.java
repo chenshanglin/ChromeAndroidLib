@@ -54,7 +54,6 @@ public class ContentClientAdapter
 	
 	public void destroy() {
 		mWebView.getTab().removeObserver(this);
-		mWebView.getTab().getContentView().setContentViewClient(null);
 		mWebView = null;
 		mWebViewClient = null;
 		mWebChromeClient = null;

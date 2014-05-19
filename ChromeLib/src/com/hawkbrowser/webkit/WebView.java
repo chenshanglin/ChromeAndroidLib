@@ -2,8 +2,12 @@ package com.hawkbrowser.webkit;
 
 import org.chromium.chrome.hawkbrowser.HawkBrowserTab;
 import org.chromium.content.browser.ContentViewDownloadDelegate;
+import org.chromium.content.browser.ContentViewRenderView;
 import org.chromium.content.browser.DownloadInfo;
+import org.chromium.ui.base.ActivityWindowAndroid;
+import org.chromium.ui.base.WindowAndroid;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -16,13 +20,14 @@ public class WebView extends FrameLayout
 	
 	private static final String TAG = "ChromeLib";
 	
-	private TabManager mTabManager;
 	private HawkBrowserTab mTab;
     private String mPendingLoadUrl;
     private WebViewClient mWebViewClient;
     private WebChromeClient mWebChromeClient;
     private ContentClientAdapter mContentClientAdapter;
     private DownloadListener mDownloadListener;
+    private WindowAndroid mWindow;
+    private ContentViewRenderView mContentViewRenderView;
     
     
 	public WebView(Context context) {
@@ -62,7 +67,6 @@ public class WebView extends FrameLayout
 				@Override
 				public void onSuccess(boolean alreadyStarted) {
 					// TODO Auto-generated method stub
-					initAfterChromeStart();
 					loadUrlAfterChromeStart(mPendingLoadUrl);
 				}
 				
@@ -75,43 +79,58 @@ public class WebView extends FrameLayout
 			chromeInitializer.startChrome(getContext());
 		}
     }
-	
-	private void initAfterChromeStart() {
 		
-    	mTabManager = TabManager.get(getContext());        
-        addView(mTabManager, new FrameLayout.LayoutParams(
-        	FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-	}
-	
 	private void loadUrlAfterChromeStart(String url) {
 		
-		if(mTabManager.getCurrentTab() != null) 
-			mTabManager.getCurrentTab().loadUrlWithSanitization(url);
-		else {
-			mTab = mTabManager.createTab(url);
-			
-			assert mTab != null;
-			
-			mContentClientAdapter = new ContentClientAdapter(this);
-			if(null != mWebViewClient)
-				mContentClientAdapter.setWebViewClient(mWebViewClient);
-			if(null != mWebChromeClient)
-				mContentClientAdapter.SetChromeClient(mWebChromeClient);
-			
-			mTab.getContentView().setDownloadDelegate(this);
-			
-//			final Activity hostActivity = getContext() instanceof Activity ? 
-//					(Activity) getContext() : null;
-//			
-//			if(null != hostActivity) {
-//				getContentView().setContentViewClient(new ContentViewClient() {
-//		            @Override
-//		            public ContentVideoViewClient getContentVideoViewClient() {
-//		                return new ActivityContentVideoViewClient(hostActivity);
-//		            }
-//		        });	
-//			}
+		if(null == mTab) {
+			initContentViewRenderView();
+			createTab();
+			initContentClient();
 		}
+		
+		assert mTab != null;
+		
+		mTab.loadUrlWithSanitization(url);
+		
+		if(null == mWindow) {
+	    	initContentViewRenderView();
+		}
+	}
+	
+	private void initContentViewRenderView() {
+
+    	mWindow = getContext() instanceof Activity ?
+        		new ActivityWindowAndroid((Activity)getContext()) : 
+        		new WindowAndroid(getContext());
+        
+        mContentViewRenderView = new ContentViewRenderView(getContext(), mWindow) {
+            @Override
+            protected void onReadyToRender() {
+            }
+        };
+        addView(mContentViewRenderView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT));
+	}
+	
+	private void createTab() {
+		
+        mTab = new HawkBrowserTab(getContext(), mWindow);
+        addView(mTab.getContentView());
+        mContentViewRenderView.setCurrentContentView(mTab.getContentView());
+        mTab.getContentView().requestFocus();
+	}
+	
+	private void initContentClient() {
+		
+		mContentClientAdapter = new ContentClientAdapter(this);
+		if(null != mWebViewClient)
+			mContentClientAdapter.setWebViewClient(mWebViewClient);
+		if(null != mWebChromeClient)
+			mContentClientAdapter.SetChromeClient(mWebChromeClient);
+		
+		mTab.getContentView().setDownloadDelegate(this);
 	}
 		
 	public String getUrl() {
@@ -168,12 +187,19 @@ public class WebView extends FrameLayout
 		
 		if(null != mTab) {
 		
+//			removeView(mTab.getContentView());
+//			removeView(mContentViewRenderView);
+			
 			mTab.getContentView().setDownloadDelegate(null);
-			// mContentClientAdapter.destroy();
+			mContentClientAdapter.destroy();
 			
-			TabManager.get(getContext()).destroyTab(mTab);
+			mTab.destroy();
+			mContentViewRenderView.destroy();
+			mWindow.destroy();
+			
+			mContentViewRenderView = null;
+			mWindow = null;
 			mTab = null;
-			
 			mWebViewClient = null;
 			mWebChromeClient = null;
 		}
