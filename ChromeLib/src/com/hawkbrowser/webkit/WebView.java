@@ -4,12 +4,15 @@ import org.chromium.chrome.hawkbrowser.HawkBrowserTab;
 import org.chromium.content.browser.ContentViewDownloadDelegate;
 import org.chromium.content.browser.ContentViewRenderView;
 import org.chromium.content.browser.DownloadInfo;
+import org.chromium.ui.UiUtils;
 import org.chromium.ui.base.ActivityWindowAndroid;
 import org.chromium.ui.base.WindowAndroid;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -114,6 +117,9 @@ public class WebView extends FrameLayout
             protected void onReadyToRender() {
             }
         };
+        
+        mContentViewRenderView.setSurfaceViewBackgroundColor(Color.WHITE);
+        
         addView(mContentViewRenderView,
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -192,9 +198,6 @@ public class WebView extends FrameLayout
 	public void destroy() {
 		
 		if(null != mTab) {
-		
-//			removeView(mTab.getContentView());
-//			removeView(mContentViewRenderView);
 			
 			mTab.getContentView().setDownloadDelegate(null);
 			mContentClientAdapter.destroy();
@@ -258,9 +261,19 @@ public class WebView extends FrameLayout
 		mWebChromeClient = client;
 	}
 	
-	public void drawToBitmap(Bitmap bitmap) {
+	public Bitmap drawToBitmap() {
+				
 		if(null != mContentViewRenderView) {
-			mContentViewRenderView.compositeToBitmap(bitmap);
+//			Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(),
+//			Bitmap.Config.ARGB_8888);
+//			mContentViewRenderView.compositeToBitmap(bitmap);
+//			return bitmap;
+	
+			return UiUtils.generateScaledScreenshot(this, getWidth() / 4, Bitmap.Config.RGB_565);
+			
 		}
+		
+		return Bitmap.createBitmap(getWidth(), getHeight(),
+				Bitmap.Config.ARGB_8888);
 	}
 }

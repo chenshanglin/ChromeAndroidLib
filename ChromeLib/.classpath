@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="libs/media_java.jar"/>
 	<classpathentry kind="lib" path="libs/navigation_interception_java.jar"/>
 	<classpathentry kind="lib" path="libs/net_java.jar"/>
-	<classpathentry kind="lib" path="libs/ui_java.jar"/>
+	<classpathentry kind="lib" path="libs/ui_java.jar" sourcepath="E:/code/chrome_android/chromium/src/ui/android/java/src"/>
 	<classpathentry kind="lib" path="libs/web_contents_delegate_android_java.jar"/>
 	<classpathentry kind="lib" path="libs/autofill_java.jar"/>
 	<classpathentry kind="lib" path="libs/chrome_java.jar"/>

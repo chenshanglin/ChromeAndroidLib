@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -118,6 +119,12 @@ public class MainActivity extends Activity {
             }
         });
     }
+    
+    private void onQuit() {
+		mWebView.destroy();
+		mWebView = null;
+		finish();
+    }
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -129,11 +136,17 @@ public class MainActivity extends Activity {
 			} else {
 				
 				long currentMillSeconds = System.currentTimeMillis();
-				if(currentMillSeconds - mPreviousBackKeyUpTime > 1500) {
-					mWebView.destroy();
-					mWebView = null;
-					finish();
+				if(currentMillSeconds - mPreviousBackKeyUpTime > 2000) {
+					
+					new Handler().post(new Runnable() {
+						@Override
+						public void run() {
+							onQuit();
+						}
+					});
+					
 					return true;
+					
 				} else {
 					mPreviousBackKeyUpTime = currentMillSeconds;
 				}
